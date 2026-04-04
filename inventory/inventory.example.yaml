@@ -11,7 +11,7 @@ all:
       telemt_enabled: true
       telemt_port: 8443
       telemt_config:
-        secret: "0123456789abcdef0123456789abcdef"
+        secret: "Вывод openssl rand -hex 16"
       acme_email: email_for_letsencrypt@mail.example
 
     ansible_python_interpreter: /usr/bin/python3

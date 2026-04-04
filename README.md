@@ -27,7 +27,7 @@ all:
       telemt_enabled: true
       telemt_port: 8443
       telemt_config:
-        secret: "0123456789abcdef0123456789abcdef"
+        secret: "Сгенерировать с помощью openssl rand -hex 16"
       acme_email: email_for_letsencrypt@mail.example
 ```
 
@@ -51,7 +51,7 @@ all:
 
 ## run
 
-`ansible-playbook -i inventory/inventory.yaml main.yaml --check`
+`ansible-playbook -i inventory/inventory.yaml main.yaml`
 
 # После установки
 
