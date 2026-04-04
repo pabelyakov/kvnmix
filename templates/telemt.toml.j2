@@ -1,0 +1,16 @@
+[general]
+use_middle_proxy = false
+
+[general.modes]
+classic = false
+secure = false
+tls = true
+
+[server]
+port = {{ telemt_port }}
+
+[censorship]
+tls_domain = "{{ domain_name }}"
+
+[access.users]
+main = "{{ telemt_config.secret }}"

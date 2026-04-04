@@ -1,0 +1,33 @@
+- name: Ensure Angie directories exist
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+  loop:
+    - /opt/angie
+    - /opt/angie/conf
+    - /opt/angie/acme
+    - /opt/angie/www
+
+- name: Render Angie config
+  ansible.builtin.template:
+    src: angie.conf.j2
+    dest: /opt/angie/conf/angie.conf
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Render Angie docker compose file
+  ansible.builtin.template:
+    src: docker-compose.angie.yml.j2
+    dest: /opt/angie/docker-compose.yml
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Start Angie with docker compose
+  community.docker.docker_compose_v2:
+    project_src: /opt/angie
+    state: present

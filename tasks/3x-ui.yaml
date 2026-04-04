@@ -1,0 +1,23 @@
+- name: Create directories for 3x-ui
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0755'
+  loop:
+    - /opt/3x-ui/db
+    - /opt/3x-ui/cert
+
+- name: Run 3x-ui container
+  community.docker.docker_container:
+    name: 3xui_app
+    image: ghcr.io/mhsanaei/3x-ui:latest
+    state: started
+    restart_policy: unless-stopped
+    network_mode: host
+    tty: true
+    volumes:
+      - /opt/3x-ui/db:/etc/x-ui
+      - /opt/3x-ui/cert:/root/cert
+    env:
+      XRAY_VMESS_AEAD_FORCED: "false"
+      XUI_ENABLE_FAIL2BAN: "true"

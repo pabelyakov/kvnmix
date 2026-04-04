@@ -1,0 +1,20 @@
+services:
+  angie:
+    image: docker.angie.software/angie:latest
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    container_name: angie
+    restart: unless-stopped
+    network_mode: host
+    volumes:
+      - /opt/angie/conf/angie.conf:/etc/angie/angie.conf:ro
+      - /opt/angie/acme:/var/lib/angie/acme
+      - /opt/angie/www:/usr/share/angie/html:ro
+    tmpfs:
+      - /run
+      - /var/cache/angie
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"

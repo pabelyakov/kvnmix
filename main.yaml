@@ -1,0 +1,76 @@
+- hosts: all
+  become: true
+  collections:
+    - community.docker
+  vars:    
+    fail2ban_services:
+      - name: sshd
+        port: 22
+        maxretry: 3
+        bantime: 86400 # 24h in sec
+
+  pre_tasks:
+    - name: Update repositories cache
+      ansible.builtin.apt:
+        update_cache: yes
+
+    - name: Install packages
+      apt:
+        package:
+          - git
+          - jq
+          - htop
+          - zip
+          - dnsutils
+          - parted
+          - cron
+          - unzip
+          - mc
+          - net-tools
+          - lm-sensors
+        state: present
+      tags:
+        - install
+
+  tasks:
+    - name: set datetime
+      timezone:
+        name: Europe/Moscow
+      tags: timezone
+
+    - name: Configure fail2ban
+      ansible.builtin.import_role:
+        name: Oefenweb.fail2ban
+      tags: fail2ban
+
+    - name: Configure docker
+      ansible.builtin.import_role:
+        name: geerlingguy.docker
+      tags: docker
+    
+    - name: Configure docker network
+      ansible.builtin.import_tasks: tasks/docker-network.yaml
+      tags: vpn
+
+    - name: Deploy 3x-ui
+      ansible.builtin.import_tasks: tasks/3x-ui.yaml
+      tags: vpn
+
+    - name: Deploy telemt (docker)
+      ansible.builtin.import_tasks: tasks/telemt.yaml
+      when: telemt_enabled | default(false)
+      tags: proxy
+
+    - name: Deploy Angie
+      ansible.builtin.import_tasks: tasks/angie.yaml
+      tags: angie
+
+    - name: Configure ufw
+      ansible.builtin.import_tasks: tasks/ufw.yaml
+      tags: ufw
+
+  handlers:
+    - name: Reload angie
+      ansible.builtin.service:
+        name: angie
+        state: reloaded

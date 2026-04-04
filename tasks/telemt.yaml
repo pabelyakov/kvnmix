@@ -1,0 +1,28 @@
+- name: Ensure telemt config dir exists
+  ansible.builtin.file:
+    path: /opt/telemt/config
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Render telemt config
+  ansible.builtin.template:
+    src: telemt.toml.j2
+    dest: /opt/telemt/config/telemt.toml
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Render telemt docker compose file
+  ansible.builtin.template:
+    src: docker-compose.telemt.yml.j2
+    dest: /opt/telemt/docker-compose.yml
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Start telemt with docker compose
+  community.docker.docker_compose_v2:
+    project_src: /opt/telemt
+    state: present
