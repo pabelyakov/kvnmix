@@ -8,11 +8,14 @@ all:
       domain_name: domain.example.com
       xui_upstream_host: 127.0.0.1
       xui_upstream_port: 2053
+      xui_subscription_path: "Рандомный путь для подписок"
+      xui_subscription_port: 2054
       telemt_enabled: true
       telemt_port: 8443
       telemt_config:
         secret: "Вывод openssl rand -hex 16"
       acme_email: email_for_letsencrypt@mail.example
+      angie_ssl_port: 10000
 
     ansible_python_interpreter: /usr/bin/python3
     acme_email: keptelr@ya.ru

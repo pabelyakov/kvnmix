@@ -69,6 +69,11 @@
       ansible.builtin.import_tasks: tasks/ufw.yaml
       tags: ufw
 
+    - name: Restart Docker service
+      ansible.builtin.service:
+        name: docker
+        state: restarted
+
   handlers:
     - name: Reload angie
       ansible.builtin.service:

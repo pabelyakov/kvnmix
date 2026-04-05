@@ -17,12 +17,12 @@ http {
         acme le;
 
         location / {
-            return 301 https://$host$request_uri;
+            return 301 https://$host:{{ angie_ssl_port }}$request_uri;
         }
     }
 
     server {
-        listen 30001 ssl http2;
+        listen {{ angie_ssl_port }} ssl http2;
         server_name {{ domain_name }};
         acme le;
 
@@ -30,16 +30,38 @@ http {
         ssl_certificate_key $acme_cert_key_le;
 
         location / {
-            proxy_pass http://{{ xui_upstream_host }}:{{ xui_upstream_port }};
             proxy_http_version 1.1;
-
-            proxy_set_header Host $host;
-            proxy_set_header X-Real-IP $remote_addr;
-            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-            proxy_set_header X-Forwarded-Proto $scheme;
-
+            
             proxy_set_header Upgrade $http_upgrade;
             proxy_set_header Connection "upgrade";
+
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+            proxy_set_header Host $http_host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header Range $http_range;
+            proxy_set_header If-Range $http_if_range;
+
+            proxy_redirect off;
+            proxy_pass http://{{ xui_upstream_host }}:{{ xui_upstream_port }};
+        }
+
+        location /{{ xui_subscription_path }}/ {
+            proxy_http_version 1.1;
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection "upgrade";
+
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+            proxy_set_header Host $http_host;
+            proxy_set_header X-Forwarded-Host $http_host;
+            proxy_set_header X-Forwarded-Port $server_port;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header Range $http_range;
+            proxy_set_header If-Range $http_if_range;
+
+            proxy_redirect off;
+            proxy_pass http://{{ xui_upstream_host }}:{{ xui_subscription_port }};
         }
     }
 }

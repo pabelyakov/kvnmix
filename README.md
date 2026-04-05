@@ -13,23 +13,7 @@
 
 ## Настраиваем inventory/inventory.yaml
 
-```
-all:
-  hosts:
-    host-1:
-      ansible_host: 127.0.0.1
-      ansible_user: root
-      ansible_port: 22
-      ansible_ssh_private_key_file: ~/.ssh/id_rsa
-      domain_name: domain.example.com
-      xui_upstream_host: 127.0.0.1
-      xui_upstream_port: 2053
-      telemt_enabled: true
-      telemt_port: 8443
-      telemt_config:
-        secret: "Сгенерировать с помощью openssl rand -hex 16"
-      acme_email: email_for_letsencrypt@mail.example
-```
+Берем за основу `inventory.example.yaml`, копируем в `inventory.yaml`
 
 ## Добавляем ssh-ключ на серверы из inventory
 
