@@ -11,7 +11,8 @@ services:
     volumes:
       - /opt/telemt/config:/etc/telemt
 
-    network_mode: host
+    ports:
+      - "{{ telemt_port }}:{{ telemt_port }}"
 
     security_opt:
       - no-new-privileges:true

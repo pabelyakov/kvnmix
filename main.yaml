@@ -43,27 +43,27 @@
         name: Oefenweb.fail2ban
       tags: fail2ban
 
-    - name: Configure docker
-      ansible.builtin.import_role:
-        name: geerlingguy.docker
-      tags: docker
+    # - name: Configure docker
+    #   ansible.builtin.import_role:
+    #     name: geerlingguy.docker
+    #   tags: docker
     
     - name: Configure docker network
       ansible.builtin.import_tasks: tasks/docker-network.yaml
       tags: vpn
 
-    - name: Deploy 3x-ui
-      ansible.builtin.import_tasks: tasks/3x-ui.yaml
-      tags: vpn
+    # - name: Deploy 3x-ui
+    #   ansible.builtin.import_tasks: tasks/3x-ui.yaml
+    #   tags: vpn
 
     - name: Deploy telemt (docker)
       ansible.builtin.import_tasks: tasks/telemt.yaml
       when: telemt_enabled | default(false)
       tags: proxy
 
-    - name: Deploy Angie
-      ansible.builtin.import_tasks: tasks/angie.yaml
-      tags: angie
+    # - name: Deploy Angie
+    #   ansible.builtin.import_tasks: tasks/angie.yaml
+    #   tags: angie
 
     - name: Configure ufw
       ansible.builtin.import_tasks: tasks/ufw.yaml
