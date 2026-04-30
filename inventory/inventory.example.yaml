@@ -5,18 +5,18 @@ all:
       ansible_user: root
       ansible_port: 22
       ansible_ssh_private_key_file: ~/.ssh/id_rsa
-      xui_enabled: true
       domain_name: domain.example.com
-      xui_upstream_host: 127.0.0.1
-      xui_upstream_port: 2053
-      xui_subscription_path: "Рандомный путь для подписок"
-      xui_subscription_port: 2054
       telemt_enabled: true
-      telemt_port: 8443
       telemt_config:
         secret: "Вывод openssl rand -hex 16"
-      acme_email: email_for_letsencrypt@mail.example
-      angie_ssl_port: 10000
 
+  vars:
+    xui_enabled: true
+    xui_subscription_path: "Рандомная строка"
+    xui_subscription_port: 2096
+    acme_email: "Ваш email"
+    angie_ssl_port: 10000
+    xui_upstream_host: 127.0.0.1
+    xui_upstream_port: 2053
+    telemt_port: 8443
     ansible_python_interpreter: /usr/bin/python3
-    acme_email: keptelr@ya.ru
