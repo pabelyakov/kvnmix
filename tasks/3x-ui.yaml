@@ -4,20 +4,18 @@
     state: directory
     mode: '0755'
   loop:
-    - /opt/3x-ui/db
-    - /opt/3x-ui/cert
+    - /opt/3xui/db
+    - /opt/3xui/cert
 
-- name: Run 3x-ui container
-  community.docker.docker_container:
-    name: 3xui_app
-    image: ghcr.io/mhsanaei/3x-ui:latest
-    state: started
-    restart_policy: unless-stopped
-    network_mode: host
-    tty: true
-    volumes:
-      - /opt/3x-ui/db:/etc/x-ui
-      - /opt/3x-ui/cert:/root/cert
-    env:
-      XRAY_VMESS_AEAD_FORCED: "false"
-      XUI_ENABLE_FAIL2BAN: "true"
+- name: Render 3xui docker compose file
+  ansible.builtin.template:
+    src: docker-compose.3xui.yml.j2
+    dest: /opt/3xui/docker-compose.yml
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Start 3xui with docker compose
+  community.docker.docker_compose_v2:
+    project_src: /opt/3xui
+    state: present
