@@ -1,9 +1,11 @@
 # Что делает
-
+```
+Актуально для Ubuntu 24.04
+```
 - Устанавливает fail2ban и настраивает на ssh
 - Устанавливает [telemet](https://github.com/An0nX/telemt-docker)
-- Устанавилвает [3xui](https://github.com/MHSanaei/3x-ui)
-- Устанавливает [Angie](https://angie.software/) и выпускает сертификат для морды 3ui
+- Устанавилвает [3xui](https://github.com/MHSanaei/3x-ui) (опционально, `xui_enabled: true`)
+- Устанавливает [Angie](https://angie.software/) (опционально, `xui_enabled: true`) и выпускает сертификат для морды 3ui
 
 # Подготовка
 
@@ -18,6 +20,16 @@
 ## Добавляем ssh-ключ на серверы из inventory
 
 `ssh-copy-id -p 22 root@127.0.0.1`
+
+## Меняем дефолтный ssh порт на другой
+
+- `sudo nano /etc/ssh/sshd_config`
+- `Выставляем в Port нужное значение`
+- `sudo nano /lib/systemd/system/ssh.socket`
+- `Выставляем для ListenStream нужное значение`
+- `sudo systemctl restart ssh`
+- `sudo systemctl daemon-reload`
+- `sudo systemctl restart ssh.socket`
 
 ## Ставим зависимости
 
@@ -45,8 +57,14 @@
 - Логинимся в ui: admin / admin
   - Настроки -> Учетная запись - меняем логин и пароль
   - Панель -> IP-адрес управления панелью выставляем 127.0.0.1 (перестраховка, т.к. локальный порт понели отсекается через ufw)
-  - Домен панели -> Прописываем домен
+  - Домен панели -> `значение_domain_name_из_inventory`
   - Жмем "Перезапуск панели"
+  - Настройки -> Подписка
+    - Прослушивание IP : 127.0.0.1
+    - Домен прослушивания: `значение_domain_name_из_inventory`
+    - Корневой путь URL-адреса подписки: `/значение_xui_subscription_path_из_inventory/`
+    - URI обратного прокси: `https://значение_domain_name_из_inventory/значение_xui_subscription_path_из_inventory/`
+
 
 ## Получение url для подключения к telemet
 

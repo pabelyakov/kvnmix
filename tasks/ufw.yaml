@@ -12,7 +12,7 @@
   loop: "{{ ports | product(['tcp', 'udp']) | list }}"
   vars:
     ports:
-      - "22"
+      - "{{ ansible_port }}"
       - "80"
       - "443"
       - "8443"

@@ -18,6 +18,9 @@
     owner: root
     group: root
     mode: "0644"
+  notify:
+    - Apply angie compose
+    - Restart angie containers
 
 - name: Render Angie docker compose file
   ansible.builtin.template:
@@ -26,8 +29,5 @@
     owner: root
     group: root
     mode: "0644"
-
-- name: Start Angie with docker compose
-  community.docker.docker_compose_v2:
-    project_src: /opt/angie
-    state: present
+  notify:
+    - Apply angie compose

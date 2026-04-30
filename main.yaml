@@ -5,7 +5,7 @@
   vars:    
     fail2ban_services:
       - name: sshd
-        port: 22
+        port: "{{ ansible_port }}"
         maxretry: 3
         bantime: 86400 # 24h in sec
 
@@ -38,38 +38,65 @@
         name: Europe/Moscow
       tags: timezone
 
+    - name: Configure ufw
+      ansible.builtin.import_tasks: tasks/ufw.yaml
+      tags: secure, ufw
+
     - name: Configure fail2ban
       ansible.builtin.import_role:
         name: Oefenweb.fail2ban
-      tags: fail2ban
+      tags: secure, fail2ban
 
     - name: Configure docker
       ansible.builtin.import_role:
         name: geerlingguy.docker
       tags: docker
-    
-    # - name: Configure docker network
-    #   ansible.builtin.import_tasks: tasks/docker-network.yaml
-    #   tags: vpn
 
     - name: Deploy 3x-ui
       ansible.builtin.import_tasks: tasks/3x-ui.yaml
-      tags: vpn
+      when: xui_enabled | default(false)
+      tags: 3xui
+
+    - name: Deploy Angie
+      ansible.builtin.import_tasks: tasks/angie.yaml
+      when: xui_enabled | default(false)
+      tags: 3xui
 
     - name: Deploy telemt (docker)
       ansible.builtin.import_tasks: tasks/telemt.yaml
       when: telemt_enabled | default(false)
-      tags: proxy
-
-    - name: Deploy Angie
-      ansible.builtin.import_tasks: tasks/angie.yaml
-      tags: angie
-
-    - name: Configure ufw
-      ansible.builtin.import_tasks: tasks/ufw.yaml
-      tags: ufw
+      tags: telemt
 
     - name: Restart Docker service
       ansible.builtin.service:
         name: docker
+        state: restarted
+
+  handlers:
+    - name: Apply telemt compose
+      community.docker.docker_compose_v2:
+        project_src: /opt/telemt
+        state: present
+        recreate: auto
+
+    - name: Restart telemt containers
+      community.docker.docker_compose_v2:
+        project_src: /opt/telemt
+        state: restarted
+
+    - name: Apply 3xui compose
+      community.docker.docker_compose_v2:
+        project_src: /opt/3xui
+        state: present
+        recreate: auto
+
+    - name: Apply angie compose
+      community.docker.docker_compose_v2:
+        project_src: /opt/angie
+        state: present
+        recreate: auto
+
+    - name: Restart angie containers
+      community.docker.docker_compose_v2:
+        project_src: /opt/angie
         state: restarted

@@ -13,6 +13,9 @@
     owner: root
     group: root
     mode: "0644"
+  notify:
+    - Apply telemt compose
+    - Restart telemt containers
 
 - name: Render telemt docker compose file
   ansible.builtin.template:
@@ -21,8 +24,5 @@
     owner: root
     group: root
     mode: "0644"
-
-- name: Start telemt with docker compose
-  community.docker.docker_compose_v2:
-    project_src: /opt/telemt
-    state: present
+  notify:
+    - Apply telemt compose

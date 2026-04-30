@@ -12,16 +12,6 @@ http {
         email={{ acme_email }};
 
     server {
-        listen 80;
-        server_name {{ domain_name }};
-        acme le;
-
-        location / {
-            return 301 https://$host:{{ angie_ssl_port }}$request_uri;
-        }
-    }
-
-    server {
         listen {{ angie_ssl_port }} ssl http2;
         server_name {{ domain_name }};
         acme le;
