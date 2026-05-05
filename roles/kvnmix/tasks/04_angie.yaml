@@ -1,0 +1,71 @@
+- name: Ensure Angie directories exist
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+  loop:
+    - /opt/angie
+    - /opt/angie/conf
+    - /opt/angie/acme
+    - /opt/angie/www
+
+- name: Check secret file exists
+  ansible.builtin.stat:
+    path: "/opt/angie/conf/secret"
+  register: secret_file
+  check_mode: no
+  changed_when: false
+
+- name: Generate 3xui secret if secret file not exist
+  ansible.builtin.shell: "openssl rand -hex 16"
+  register: secret_command
+  when: not secret_file.stat.exists
+  changed_when: false
+
+- name: Save 3xui secret to file
+  ansible.builtin.copy:
+    content: "{{ secret_command.stdout }}"
+    dest: /opt/angie/conf/secret
+    owner: root
+    group: root
+    mode: "0644"
+    force: no
+  when: secret_command is defined and secret_command.stdout is defined
+
+- name: Read 3xui secret from file
+  ansible.builtin.slurp:
+    src: /opt/angie/conf/secret
+  register: secret_file_content
+
+- name: Set 3xui secret fact
+  ansible.builtin.set_fact:
+    xui_subscription_path: "{{ secret_file_content.content | b64decode }}"
+  when: secret_file_content is defined
+
+- name: Render Angie config
+  ansible.builtin.template:
+    src: angie.conf.j2
+    dest: /opt/angie/conf/angie.conf
+    owner: root
+    group: root
+    mode: "0644"
+  notify:
+    - Restart angie containers
+
+- name: Render Angie docker compose file
+  ansible.builtin.template:
+    src: docker-compose.angie.yml.j2
+    dest: /opt/angie/docker-compose.yml
+    owner: root
+    group: root
+    mode: "0644"
+  notify:
+    - Restart angie containers
+
+- name: Apply angie compose
+  community.docker.docker_compose_v2:
+    project_src: /opt/angie
+    state: present
+    recreate: auto

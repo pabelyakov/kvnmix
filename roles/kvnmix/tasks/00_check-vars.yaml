@@ -1,0 +1,8 @@
+---
+- name: Check if variables are explicitly set
+  fail:
+    msg: "{{ item }} is not set"
+  when: vars[item] == ""
+  loop:
+    - domain
+    - acme_email

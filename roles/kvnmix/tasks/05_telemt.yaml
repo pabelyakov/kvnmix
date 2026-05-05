@@ -1,0 +1,67 @@
+---
+- name: Ensure telemt config dir exists
+  ansible.builtin.file:
+    path: /opt/telemt/config
+    state: directory
+    owner: root
+    group: root
+    mode: "0777"
+
+- name: Check secret file exists
+  ansible.builtin.stat:
+    path: "/opt/telemt/config/secret"
+  register: secret_file
+  check_mode: no
+  changed_when: false
+
+- name: Generate telemt secret if secret file not exist
+  ansible.builtin.shell: "openssl rand -hex 16"
+  register: telemt_secret_command
+  when: not secret_file.stat.exists
+  changed_when: false
+
+- name: Save telemt secret to file
+  ansible.builtin.copy:
+    content: "{{ telemt_secret_command.stdout }}"
+    dest: /opt/telemt/config/secret
+    owner: root
+    group: root
+    mode: "0644"
+    force: no
+  when: telemt_secret_command is defined and telemt_secret_command.stdout is defined
+
+- name: Read telemt secret from file
+  ansible.builtin.slurp:
+    src: /opt/telemt/config/secret
+  register: secret_file_content
+
+- name: Set telemt secret fact
+  ansible.builtin.set_fact:
+    telemt_secret: "{{ secret_file_content.content | b64decode }}"
+  when: secret_file_content is defined
+
+- name: Render telemt config
+  ansible.builtin.template:
+    src: telemt.toml.j2
+    dest: /opt/telemt/config/telemt.toml
+    owner: root
+    group: root
+    mode: "0644"
+  notify:
+    - Restart telemt containers
+
+- name: Render telemt docker compose file
+  ansible.builtin.template:
+    src: docker-compose.telemt.yml.j2
+    dest: /opt/telemt/docker-compose.yml
+    owner: root
+    group: root
+    mode: "0644"
+  notify:
+    - Restart telemt containers
+
+- name: Apply telemt compose
+  community.docker.docker_compose_v2:
+    project_src: /opt/telemt
+    state: present
+    recreate: auto

@@ -2,7 +2,7 @@
   ansible.builtin.file:
     path: "{{ item }}"
     state: directory
-    mode: '0755'
+    mode: "0755"
   loop:
     - /opt/3xui/db
     - /opt/3xui/cert
@@ -14,5 +14,9 @@
     owner: root
     group: root
     mode: "0644"
-  notify:
-    - Apply 3xui compose
+
+- name: Apply 3xui compose
+  community.docker.docker_compose_v2:
+    project_src: /opt/3xui
+    state: present
+    recreate: auto
