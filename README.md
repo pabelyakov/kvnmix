@@ -4,7 +4,7 @@
 ```
 - Устанавливает fail2ban и настраивает на ssh
 - Устанавливает [telemet](https://github.com/An0nX/telemt-docker)
-- Устанавилвает [3xui](https://github.com/MHSanaei/3x-ui) (опционально, `xui_enabled: true`)
+- Устанавливает [3xui](https://github.com/MHSanaei/3x-ui) (опционально, `xui_enabled: true`)
 - Устанавливает [Angie](https://angie.software/) (опционально, `xui_enabled: true`) и выпускает сертификат для морды 3ui
 
 # Подготовка
