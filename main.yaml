@@ -10,7 +10,3 @@
           maxretry: 3
           bantime: 86400 # 24h in sec
     - role: kvnmix
-      vars:
-        acme_email: "site@zhis.mooo.com"
-        domain: "zhis.mooo.com"
-        telemt_masking_domain: "sushi-flow.ru"
