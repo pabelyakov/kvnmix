@@ -13,9 +13,11 @@
   vars:
     ports:
       - "{{ ansible_port }}"
-      - "80"
+      - "{{ xui_port }}"
+      - "{{ telemt_port }}"
       - "443"
-      - "8443"
+      - "80"
+      - "{{ angie_ssl_port }}"
       - "10000:65535"
 
 - name: Enable UFW

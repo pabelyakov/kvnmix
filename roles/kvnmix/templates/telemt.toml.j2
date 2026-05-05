@@ -1,0 +1,27 @@
+[general]
+use_middle_proxy = false
+
+[general.links]
+public_host = "{{ domain }}"
+public_port = {{ telemt_port }}
+
+[general.modes]
+classic = false
+secure = false
+tls = true
+
+[server]
+port = {{ telemt_port }}
+
+[server.api]
+enabled = true
+listen = "127.0.0.1:9091"
+whitelist = ["127.0.0.1/32", "::1/128"]
+minimal_runtime_enabled = false
+minimal_runtime_cache_ttl_ms = 1000
+
+[censorship]
+tls_domain = "{{ domain }}"
+
+[access.users]
+main = "{{ telemt_secret }}"

@@ -1,0 +1,10 @@
+---
+- name: Restart telemt containers
+  community.docker.docker_compose_v2:
+    project_src: /opt/telemt
+    state: restarted
+
+- name: Restart angie containers
+  community.docker.docker_compose_v2:
+    project_src: /opt/angie
+    state: restarted

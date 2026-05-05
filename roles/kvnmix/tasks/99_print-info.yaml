@@ -1,0 +1,15 @@
+- name: Get telemt config
+  ansible.builtin.shell: 'docker logs telemt | grep  "EE-TLS" | tail -n 1 | cut -d " " -f 9'
+  register: telemt_user_config
+
+- name: Display telemt user config
+  debug:
+    msg: "{{ telemt_user_config.stdout }}"
+
+- name: Display 3xui admin URL
+  debug:
+    msg: "3xui admin URL: https://{{ domain }}:{{ angie_ssl_port }}/"
+
+- name: Display 3xui subscription URL
+  debug:
+    msg: "3xui subscription URL: https://{{ domain }}:{{ angie_ssl_port }}/{{ xui_subscription_path }}/"

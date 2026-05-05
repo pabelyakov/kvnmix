@@ -1,0 +1,21 @@
+---
+- name: Update repositories cache
+  ansible.builtin.apt:
+    update_cache: yes
+
+- name: Install packages
+  apt:
+    package:
+      - git
+      - jq
+      - htop
+      - zip
+      - dnsutils
+      - parted
+      - cron
+      - unzip
+      - mc
+      - net-tools
+      - lm-sensors
+      - ufw
+    state: present

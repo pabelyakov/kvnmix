@@ -1,0 +1,21 @@
+xui_enabled: true
+telemt_enabled: true
+
+# basic config
+domain: ""
+ansible_python_interpreter: /usr/bin/python3
+
+# telemt
+telemt_port: 8443
+
+# 3xui
+xui_enabled: true
+xui_port: 4433
+xui_upstream_host: 2053
+xui_subscription_port: 2096
+xui_upstream_host: 127.0.0.1
+xui_upstream_port: 2053
+
+# angie
+acme_email: ""
+angie_ssl_port: 4443

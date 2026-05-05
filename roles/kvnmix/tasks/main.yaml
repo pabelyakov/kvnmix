@@ -1,0 +1,51 @@
+---
+- name: Check vars
+  ansible.builtin.import_tasks: 00_check-vars.yaml
+  tags: vars
+
+- name: Install apps
+  ansible.builtin.import_tasks: 01_install-apps.yaml
+  tags: apps
+
+- name: set datetime
+  timezone:
+    name: Europe/Moscow
+  tags: timezone
+
+- name: Configure ufw
+  ansible.builtin.import_tasks: 02_ufw.yaml
+  tags: secure, ufw
+
+- name: Configure fail2ban
+  ansible.builtin.import_role:
+    name: Oefenweb.fail2ban
+  tags: secure, fail2ban
+
+- name: Configure docker
+  ansible.builtin.import_role:
+    name: geerlingguy.docker
+  tags: docker
+
+- name: Deploy 3x-ui
+  ansible.builtin.import_tasks: 03_3x-ui.yaml
+  when: xui_enabled
+  tags: 3xui
+
+- name: Deploy Angie
+  ansible.builtin.import_tasks: 04_angie.yaml
+  when: xui_enabled
+  tags: angie
+
+- name: Deploy telemt (docker)
+  ansible.builtin.import_tasks: 05_telemt.yaml
+  when: telemt_enabled
+  tags: telemt
+
+- name: Restart Docker service
+  ansible.builtin.service:
+    name: docker
+    state: restarted
+
+- name: Print info
+  ansible.builtin.import_tasks: 99_print-info.yaml
+  tags: report
